@@ -52,7 +52,6 @@ export default function SyncManager() {
 
   const handleFetchAll = async () => {
     setIsFetching(true);
-    addLog("Starting full game data import...");
     try {
       const r = await fetch("/api/fetch-all", { method: "POST" });
       const data: SyncResult = await r.json();
@@ -80,7 +79,6 @@ export default function SyncManager() {
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
-    addLog("Checking for new game data (patch updates)...");
     try {
       const r = await fetch("/api/refresh", { method: "POST" });
       const data: SyncResult = await r.json();
