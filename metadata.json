@@ -1,6 +1,0 @@
-{
-  "name": "GPIP — Genshin Impact Progression Intelligence Platform",
-  "description": "A fully offline intelligent progression route planner powered entirely by a local SQLite database.",
-  "requestFramePermissions": [],
-  "majorCapabilities": []
-}
