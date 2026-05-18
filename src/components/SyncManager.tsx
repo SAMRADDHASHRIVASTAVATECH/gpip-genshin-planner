@@ -72,7 +72,7 @@ export default function SyncManager() {
       }
       fetchDbStatus();
     } catch (err: any) {
-      addLog("Demo deployment mode active — backend import disabled.");
+      addLog("Cloud-hosted version detected — local database import is unavailable in browser mode.");
     } finally {
       setIsFetching(false);
     }
@@ -101,7 +101,7 @@ export default function SyncManager() {
       }
       fetchDbStatus();
     } catch (err: any) {
-      addLog("Demo deployment mode active — refresh system disabled.");
+      addLog("Cloud-hosted version detected — local database refresh is unavailable in browser mode.");
     } finally {
       setIsRefreshing(false);
     }
@@ -119,7 +119,7 @@ export default function SyncManager() {
       {/* Status Banner */}
       <div className={`p-4 rounded-xl border flex items-center gap-3 ${isSeeded ? 'bg-green-500/5 border-green-500/20' : 'bg-orange-500/10 border-orange-500/30'}`}>
         {isSeeded
-          ? <><WifiOff size={18} className="text-green-400" /><div><p className="text-sm font-bold text-green-400">Offline Mode Active</p><p className="text-xs text-zinc-400 font-mono">All application data is loaded from your local database. No internet required.</p></div></>
+          ? <><WifiOff size={18} className="text-green-400" /><div><p className="text-sm font-bold text-green-400">Cloud Browser Mode</p><p className="text-xs text-zinc-400 font-mono">Core planner systems are available online. Local database synchronization features require desktop/local runtime.</p></div></>
           : <><Wifi size={18} className="text-orange-400" /><div><p className="text-sm font-bold text-orange-400">Initial Setup Required</p><p className="text-xs text-zinc-400 font-mono">Click "Fetch Game Data" to import all Genshin data into your local offline database.</p></div></>
         }
       </div>
