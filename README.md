@@ -60,7 +60,7 @@ Project Celestia is built as a hybrid progression-management platform using:
 - Express
 - SQLite
 
-The project was initially scaffolded using Google AI Studio, while the system refinement, architecture restructuring, debugging, backend/frontend synchronization, deployment recovery, planner integration, and progression logic implementation were manually developed and refined throughout the project lifecycle.
+The system architecture, progression logic, planner integration, debugging, backend/frontend synchronization, deployment recovery, and runtime refinement were manually developed and expanded throughout the project lifecycle.
 
 ---
 
@@ -156,7 +156,7 @@ This project went through extensive:
 - runtime restoration
 - planner integration debugging
 
-and evolved from an interrupted scaffold into a fully functioning progression-management platform.
+and evolved into a fully functioning progression-management platform.
 
 ---
 
