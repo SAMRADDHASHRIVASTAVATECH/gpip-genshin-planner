@@ -1,0 +1,17 @@
+[
+  {
+    "id": "raiden",
+    "name": "Raiden Shogun",
+    "region": "Inazuma"
+  },
+  {
+    "id": "nahida",
+    "name": "Nahida",
+    "region": "Sumeru"
+  },
+  {
+    "id": "furina",
+    "name": "Furina",
+    "region": "Fontaine"
+  }
+]
