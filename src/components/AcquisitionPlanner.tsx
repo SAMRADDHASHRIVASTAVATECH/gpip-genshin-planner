@@ -102,58 +102,15 @@ export default function AcquisitionPlanner() {
   const [setupOpen,  setSetupOpen]  = useState(!plan);
 
   useEffect(() => {
-
-    fetch("/data/characters.json")
+    fetch("/api/characters")
       .then(r => r.json())
       .then(setDbChars)
-      .catch(() => {
+      .catch(err => console.error(err));
 
-        setDbChars([
-          {
-            id: "raiden",
-            name: "Raiden Shogun",
-            region: "Inazuma"
-          },
-
-          {
-            id: "nahida",
-            name: "Nahida",
-            region: "Sumeru"
-          },
-
-          {
-            id: "furina",
-            name: "Furina",
-            region: "Fontaine"
-          }
-        ]);
-
-      });
-
-    fetch("/data/weapons.json")
+    fetch("/api/weapons")
       .then(r => r.json())
       .then(setDbWeapons)
-      .catch(() => {
-
-        setDbWeapons([
-          {
-            id: "engulfing",
-            name: "Engulfing Lightning"
-          },
-
-          {
-            id: "aquasimulacra",
-            name: "Aqua Simulacra"
-          },
-
-          {
-            id: "splendor",
-            name: "Splendor of Tranquil Waters"
-          }
-        ]);
-
-      });
-
+      .catch(err => console.error(err));
   }, []);
 
   useEffect(() => { lsSet(KEYS.ACQUISITION, acqSetup); }, [acqSetup]);
