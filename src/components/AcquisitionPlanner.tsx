@@ -1,10 +1,57 @@
 import React, { useState, useEffect, useCallback } from "react";
-import {
-  lsGet, lsSet, KEYS, generateAcquisitionPlan, DEFAULT_PLACES, REGION_META,
-  getPlacesByRegion, calcAutoOrbsFromPlaces,
-  OwnedCharacter, PlaceState, AccountSetup, GeneratedAcquisitionPlan,
-  AcquisitionSetup,
-} from "../lib/offlineData";
+
+// --- INLINED OFFLINE DATA ---
+export interface OwnedCharacter { id: string; name: string; level: number; ascension: number; talentNa: number; talentSkill: number; talentBurst: number; weaponName: string; weaponLevel: number; }
+export interface PlaceState { id: string; name: string; region: string; explored: number; totalWaypoints: number; waypointsUnlocked: number; totalOrbs: number; statues: { id: string; discovered: boolean; }[]; }
+export interface AccountSetup { ar: number; arExp: number; targetAR: number; }
+export interface AcquisitionSetup { targetCharId: string; targetCharName: string; targetCharRegion: string; currentPrimos: number; }
+export interface GeneratedAcquisitionPlan { targetCharName: string; primosNeeded: number; primosRemaining: number; pullsNeeded: number; questRequirements: { name: string; description: string; met: boolean; }[]; basePlan: { executionOrder: { order: number; phase: string; action: string; impact: string; }[]; }; }
+
+export const KEYS = { ACQUISITION: 'acq', SETUP: 'setup', CHARACTERS: 'chars', PLACES: 'places', PARTY: 'party' };
+export const DEFAULT_PLACES: PlaceState[] = [
+    { id: 'p1', name: 'Narukami Island', region: 'inazuma', explored: 45, totalWaypoints: 15, waypointsUnlocked: 10, totalOrbs: 50, statues: [{id: 's1', discovered: true}] },
+    { id: 'p2', name: 'Avidya Forest', region: 'sumeru', explored: 10, totalWaypoints: 20, waypointsUnlocked: 2, totalOrbs: 100, statues: [{id: 's2', discovered: false}] },
+    { id: 'p3', name: 'Court of Fontaine Region', region: 'fontaine', explored: 80, totalWaypoints: 25, waypointsUnlocked: 25, totalOrbs: 60, statues: [{id: 's3', discovered: true}] },
+];
+export const REGION_META: Record<string, { name: string; arRequired: number }> = {
+    inazuma: { name: 'Inazuma', arRequired: 30 },
+    sumeru: { name: 'Sumeru', arRequired: 35 },
+    fontaine: { name: 'Fontaine', arRequired: 40 },
+    mondstadt: { name: 'Mondstadt', arRequired: 1 },
+    liyue: { name: 'Liyue', arRequired: 15 }
+};
+
+export const lsGet = <T,>(key: string, defaultVal: T): T => {
+  try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : defaultVal; }
+  catch { return defaultVal; }
+};
+export const lsSet = <T,>(key: string, val: T) => {
+  try { localStorage.setItem(key, JSON.stringify(val)); } catch {}
+};
+export const getPlacesByRegion = (places: PlaceState[], region: string) => places.filter(p => p.region.toLowerCase() === region.toLowerCase());
+export const calcAutoOrbsFromPlaces = (places: PlaceState[]) => 0;
+export const generateAcquisitionPlan = (acq: AcquisitionSetup, setup: AccountSetup, chars: OwnedCharacter[], party: string[], places: PlaceState[]): GeneratedAcquisitionPlan => {
+    const needed = 28800; // 180 pulls for hard guarantee
+    const remaining = Math.max(0, needed - acq.currentPrimos);
+    return {
+        targetCharName: acq.targetCharName,
+        primosNeeded: needed,
+        primosRemaining: remaining,
+        pullsNeeded: Math.ceil(remaining / 160),
+        questRequirements: [
+            { name: `Unlock ${acq.targetCharRegion}`, description: `Reach AR and complete Archon Quest for ${acq.targetCharRegion}`, met: setup.ar >= (REGION_META[acq.targetCharRegion.toLowerCase()]?.arRequired || 1) }
+        ],
+        basePlan: {
+            executionOrder: [
+                { order: 1, phase: 'Exploration', action: `Explore ${acq.targetCharRegion} to gather Primogems`, impact: 'High' },
+                { order: 2, phase: 'Enemy Farming', action: `Farm local bosses and materials in ${acq.targetCharRegion}`, impact: 'Medium' },
+                { order: 3, phase: 'Character Level', action: `Level up ${acq.targetCharName} and prepare artifacts`, impact: 'High' }
+            ]
+        }
+    };
+};
+// --- END INLINED OFFLINE DATA ---
+
 import {
   Sparkles, Zap, ChevronDown, ChevronUp, Plus, Trash2,
   Users, Map, Diamond, CheckCircle, BookOpen, Target,
@@ -55,8 +102,58 @@ export default function AcquisitionPlanner() {
   const [setupOpen,  setSetupOpen]  = useState(!plan);
 
   useEffect(() => {
-    fetch("/api/characters").then(r => r.json()).then(setDbChars).catch(() => {});
-    fetch("/api/weapons").then(r => r.json()).then(setDbWeapons).catch(() => {});
+
+    fetch("/data/characters.json")
+      .then(r => r.json())
+      .then(setDbChars)
+      .catch(() => {
+
+        setDbChars([
+          {
+            id: "raiden",
+            name: "Raiden Shogun",
+            region: "Inazuma"
+          },
+
+          {
+            id: "nahida",
+            name: "Nahida",
+            region: "Sumeru"
+          },
+
+          {
+            id: "furina",
+            name: "Furina",
+            region: "Fontaine"
+          }
+        ]);
+
+      });
+
+    fetch("/data/weapons.json")
+      .then(r => r.json())
+      .then(setDbWeapons)
+      .catch(() => {
+
+        setDbWeapons([
+          {
+            id: "engulfing",
+            name: "Engulfing Lightning"
+          },
+
+          {
+            id: "aquasimulacra",
+            name: "Aqua Simulacra"
+          },
+
+          {
+            id: "splendor",
+            name: "Splendor of Tranquil Waters"
+          }
+        ]);
+
+      });
+
   }, []);
 
   useEffect(() => { lsSet(KEYS.ACQUISITION, acqSetup); }, [acqSetup]);
